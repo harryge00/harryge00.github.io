@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Pao&#39;s town</title>
+  <title>while...sleep vs tail -f /dev/null | Pao&#39;s town</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Pao&apos;s blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Pao&#39;s town">
-<meta property="og:url" content="http://harryge00.github.io/index.html">
+  <meta name="description" content="问题发现用户喜欢用while … sleep…来写Dockerfile的 ENTRYPOINT, 忍不住思考，是tail -f /dev/null的开销小,还是while true do     sleep 3 done 更小？ 答案tail -f /dev/null is better，因为tail -f 会一直等待 I/O 完成，进程一直处于Waiting状态。而 while 每隔3秒会重新进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="while...sleep vs tail -f &#x2F;dev&#x2F;null">
+<meta property="og:url" content="http://harryge00.github.io/2018/09/28/while-sleep-vs-tail-f-dev-null/index.html">
 <meta property="og:site_name" content="Pao&#39;s town">
-<meta property="og:description" content="Pao&apos;s blog">
+<meta property="og:description" content="问题发现用户喜欢用while … sleep…来写Dockerfile的 ENTRYPOINT, 忍不住思考，是tail -f /dev/null的开销小,还是while true do     sleep 3 done 更小？ 答案tail -f /dev/null is better，因为tail -f 会一直等待 I/O 完成，进程一直处于Waiting状态。而 while 每隔3秒会重新进">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-27T16:10:02.231Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Pao&#39;s town">
-<meta name="twitter:description" content="Pao&apos;s blog">
+<meta name="twitter:title" content="while...sleep vs tail -f &#x2F;dev&#x2F;null">
+<meta name="twitter:description" content="问题发现用户喜欢用while … sleep…来写Dockerfile的 ENTRYPOINT, 忍不住思考，是tail -f /dev/null的开销小,还是while true do     sleep 3 done 更小？ 答案tail -f /dev/null is better，因为tail -f 会一直等待 I/O 完成，进程一直处于Waiting状态。而 while 每隔3秒会重新进">
   
     <link rel="alternate" href="/atom.xml" title="Pao&#39;s town" type="application/atom+xml">
   
@@ -67,9 +68,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-while-sleep-vs-tail-f-dev-null" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-while-sleep-vs-tail-f-dev-null" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/09/28/while-sleep-vs-tail-f-dev-null/" class="article-date">
   <time datetime="2018-09-27T16:06:51.000Z" itemprop="datePublished">2018-09-28</time>
@@ -82,8 +81,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/28/while-sleep-vs-tail-f-dev-null/">while...sleep vs tail -f /dev/null</a>
+    <h1 class="article-title" itemprop="name">
+      while...sleep vs tail -f /dev/null
     </h1>
   
 
@@ -109,287 +108,19 @@ done</code> 更小？</p>
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-influxDB-SQL-for-Kubernetes-metrics" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/09/27/influxDB-SQL-for-Kubernetes-metrics/" class="article-date">
-  <time datetime="2018-09-27T15:57:31.000Z" itemprop="datePublished">2018-09-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/27/influxDB-SQL-for-Kubernetes-metrics/">influxDB-SQL-for-Kubernetes-metrics.md</a>
-    </h1>
+    <a href="/2018/09/27/influxDB-SQL-for-Kubernetes-metrics/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">influxDB-SQL-for-Kubernetes-metrics.md</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="节点监控指标汇总"><a href="#节点监控指标汇总" class="headerlink" title="节点监控指标汇总"></a>节点监控指标汇总</h1><ul>
-<li>这里以 10.35.48.177为例，可以访问172.25.3.194上面的influxdb进行测试</li>
-<li>InfluxDB 包含mean、group by 等语法，可以视需要使用</li>
-<li>本文中仅为示例用法</li>
-<li>有些指标是固定的，比如总的的文件系统空间、节点总内存及可分配总内存、总cpu核数、GPU总显存，所以一般搜最新的就好</li>
-</ul>
-<h2 id="容器总的cpu利用率-单位"><a href="#容器总的cpu利用率-单位" class="headerlink" title="容器总的cpu利用率(单位%)"></a>容器总的cpu利用率(单位%)</h2><p>SELECT *  FROM k8s.”default”.”cpu/node_utilization” WHERE (nodename =~ /^10.35.48.177$/ AND type = ‘node’) AND time &gt;= now() - 1h;</p>
-<p>或者</p>
-<p>SELECT mean(value) FROM k8s.”default”.”cpu/node_utilization” WHERE (nodename =~ /^10.35.48.177$/ AND type = ‘node’) AND time &gt;= now() - 1h GROUP BY time(1m)</p>
-<h2 id="总cpu核数"><a href="#总cpu核数" class="headerlink" title="总cpu核数"></a>总cpu核数</h2><p>SELECT mean(value) / 1000 FROM k8s.”default”.”cpu/node_capacity” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 5m GROUP BY time(30s)<br>部分sql语法可以自己斟酌下哈</p>
-<h2 id="内存利用率-单位"><a href="#内存利用率-单位" class="headerlink" title="内存利用率(单位%)"></a>内存利用率(单位%)</h2><p>每1分钟聚合的内存利用率均值: <code>SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;memory/node_utilization&quot; WHERE (nodename =~ /^10\.35\.48\.177$/ AND type = &#39;node&#39;) AND time &gt;= now() - 1h GROUP BY time(1m)</code></p>
-<h2 id="节点总内存-字节"><a href="#节点总内存-字节" class="headerlink" title="节点总内存 字节"></a>节点总内存 字节</h2><p>SELECT mean(value) / 1000 FROM k8s.”default”.”cpu/node_capacity” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h GROUP BY time(30s)</p>
-<h2 id="节点总的可分配内存-字节"><a href="#节点总的可分配内存-字节" class="headerlink" title="节点总的可分配内存 字节"></a>节点总的可分配内存 字节</h2><p>SELECT mean(value) FROM k8s.”default”.”memory/node_allocatable” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h GROUP BY time(30s)</p>
-<h2 id="节点上容器使用的总内存"><a href="#节点上容器使用的总内存" class="headerlink" title="节点上容器使用的总内存"></a>节点上容器使用的总内存</h2><p>SELECT value FROM k8s.”default”.”memory/usage” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h</p>
-<h2 id="节点上容器使用的RSS内存"><a href="#节点上容器使用的RSS内存" class="headerlink" title="节点上容器使用的RSS内存"></a>节点上容器使用的RSS内存</h2><p>SELECT value FROM k8s.”default”.”memory/rss” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h</p>
-<h2 id="节点上容器使用的cache内存"><a href="#节点上容器使用的cache内存" class="headerlink" title="节点上容器使用的cache内存"></a>节点上容器使用的cache内存</h2><p>SELECT value FROM k8s.”default”.”memory/cache” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h</p>
-<h2 id="节点上容器使用的working-set内存"><a href="#节点上容器使用的working-set内存" class="headerlink" title="节点上容器使用的working_set内存"></a>节点上容器使用的working_set内存</h2><p>SELECT value FROM k8s.”default”.”memory/working_set” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h</p>
-<ul>
-<li>memory_usage = RAM usage include pages that have not been accessed in a<br>long time.</li>
-<li>working set = memory usage - inactive memory.</li>
-</ul>
-<h2 id="网络读速率"><a href="#网络读速率" class="headerlink" title="网络读速率"></a>网络读速率</h2><p>SELECT value FROM k8s.”default”.”network/rx_rate” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h</p>
-<h2 id="网络写速率"><a href="#网络写速率" class="headerlink" title="网络写速率"></a>网络写速率</h2><p>SELECT value FROM k8s.”default”.”network/tx_rate” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h</p>
-<h2 id="磁盘读速率-暂时忽略，上游有bug，会显示负数"><a href="#磁盘读速率-暂时忽略，上游有bug，会显示负数" class="headerlink" title="磁盘读速率(暂时忽略，上游有bug，会显示负数)"></a>磁盘读速率(暂时忽略，上游有bug，会显示负数)</h2><p>SELECT mean(value) FROM k8s.”default”.”disk/io_read_bytes_rate” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h GROUP BY time(30s)</p>
-<h2 id="磁盘写速率-暂时忽略"><a href="#磁盘写速率-暂时忽略" class="headerlink" title="磁盘写速率(暂时忽略)"></a>磁盘写速率(暂时忽略)</h2><p>SELECT mean(value) FROM k8s.”default”.”disk/io_write_bytes_rate” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1h GROUP BY time(30s)</p>
-<h2 id="可用的文件系统空间-按照磁盘分类"><a href="#可用的文件系统空间-按照磁盘分类" class="headerlink" title="可用的文件系统空间(按照磁盘分类)"></a>可用的文件系统空间(按照磁盘分类)</h2><p>SELECT value FROM k8s.”default”.”filesystem/available” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 10m  group by resource_id</p>
-<h2 id="已使用的文件系统空间-按照磁盘分类"><a href="#已使用的文件系统空间-按照磁盘分类" class="headerlink" title="已使用的文件系统空间(按照磁盘分类)"></a>已使用的文件系统空间(按照磁盘分类)</h2><p>SELECT value FROM k8s.”default”.”filesystem/usage” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 10m  group by resource_id</p>
-<h2 id="总的的文件系统空间"><a href="#总的的文件系统空间" class="headerlink" title="总的的文件系统空间"></a>总的的文件系统空间</h2><p>SELECT value FROM k8s.”default”.”filesystem/limit” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1m  group by resource_id</p>
-<h2 id="GPU总显存"><a href="#GPU总显存" class="headerlink" title="GPU总显存"></a>GPU总显存</h2><p>SELECT mean(value) FROM k8s.”default”.”accelerator/memory_total” WHERE nodename =~ /^10.30.21.153$/ AND time &gt;= now() - 1h  GROUP BY time(1m)</p>
-<h2 id="GPU已使用的显存"><a href="#GPU已使用的显存" class="headerlink" title="GPU已使用的显存"></a>GPU已使用的显存</h2><p>SELECT mean(value) FROM k8s.”default”.”accelerator/memory_used” WHERE nodename =~ /^10.30.21.153$/ AND time &gt;= now() - 1h  GROUP BY time(1m)</p>
-<h2 id="GPU核心利用率"><a href="#GPU核心利用率" class="headerlink" title="GPU核心利用率"></a>GPU核心利用率</h2><p>SELECT value FROM k8s.”default”.”accelerator/duty_cycle” WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 10m</p>
-<h2 id="uptime-启动时间"><a href="#uptime-启动时间" class="headerlink" title="uptime 启动时间"></a>uptime 启动时间</h2><p>SELECT value FROM k8s.”default”.uptime WHERE (type = ‘node’ AND nodename =~ /^10.35.48.177$/) AND time &gt;= now() - 1m</p>
-<h1 id="容器内指标"><a href="#容器内指标" class="headerlink" title="容器内指标"></a>容器内指标</h1><h2 id="各种服务的基本查询SQL"><a href="#各种服务的基本查询SQL" class="headerlink" title="各种服务的基本查询SQL"></a>各种服务的基本查询SQL</h2><p>对于多副本(pod)的无状态服务/有状态服务/短任务，查询到的指标值应该是各个副本的和</p>
-<h3 id="无状态服务"><a href="#无状态服务" class="headerlink" title="无状态服务"></a>无状态服务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;memory/usage&quot; WHERE (type = &apos;rc&apos; AND rc_name =~ /^autotest-template-server123-4$/ AND namespace_name =~ /^guxiawei-84$/) AND time &gt;= now() - 1h GROUP BY time(1m)</span><br><span class="line">SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;cpu/usage_rate&quot; WHERE (type = &apos;rc&apos; AND rc_name =~ /^autotest-template-server123-4$/ AND namespace_name =~ /^guxiawei-84$/) AND time &gt;= now() - 1h GROUP BY time(1m)</span><br></pre></td></tr></table></figure>
-<h3 id="短任务"><a href="#短任务" class="headerlink" title="短任务"></a>短任务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;memory/usage&quot; WHERE (type = &apos;job&apos; AND job_name =~ /^job-createzy6vgx$/ AND namespace_name =~ /^liuguiying-61$/) AND time &gt;= now() - 1h GROUP BY time(1m)</span><br></pre></td></tr></table></figure>
-<h3 id="有状态服务"><a href="#有状态服务" class="headerlink" title="有状态服务"></a>有状态服务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;memory/usage&quot; WHERE (type = &apos;ss&apos; AND ss_name =~ /^testservice110$/ AND namespace_name =~ /^wangmeng3-154$/) AND time &gt;= now() - 1h GROUP BY time(1m)</span><br></pre></td></tr></table></figure>
-<h3 id="pod"><a href="#pod" class="headerlink" title="pod"></a>pod</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;memory/usage&quot; WHERE (type = &apos;pod&apos; AND pod_name =~ /^testservice110-0$/ AND namespace_name =~ /^wangmeng3-154$/) AND time &gt;= now() - 1h GROUP BY time(1m)</span><br><span class="line">SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;cpu/usage_rate&quot; WHERE (type = &apos;pod&apos; AND pod_name =~ /^autotest-template-server123-4-87ms1$/ AND namespace_name =~ /^guxiawei-84$/) AND time &gt;= now() - 1h GROUP BY time(1m)</span><br></pre></td></tr></table></figure>
-<h3 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h3><ul>
-<li><p>根据pod名称和namespace查询，并按照容器名分类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT value FROM k8s.&quot;default&quot;.&quot;memory/usage&quot; WHERE (type=&apos;pod_container&apos; AND pod_name=&apos;gb-groupdn-stable-779-1-rcv9x&apos;  AND namespace_name =~ /^guanbo-225$/) AND time &gt;= now() - 5m group by container_name</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>按照容器名和pod名和namespace查询</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT value FROM k8s.&quot;default&quot;.&quot;memory/usage&quot; WHERE (type=&apos;pod_container&apos; AND pod_name=&apos;gb-groupdn-stable-779-1-rcv9x&apos;  AND namespace_name =~ /^guanbo-225$/ and container_name=&apos;media-node&apos;) AND time &gt;= now() - 5m</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>按照容器名和namespace查询（不推荐，容器名可能重名）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT value FROM k8s.&quot;default&quot;.&quot;memory/usage&quot; WHERE (type=&apos;pod_container&apos; AND namespace_name =~ /^guanbo-225$/ and container_name=&apos;media-node&apos;) AND time &gt;= now() - 5m</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h3 id="GPU"><a href="#GPU" class="headerlink" title="GPU"></a>GPU</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT mean(value) FROM k8s.&quot;default&quot;.&quot;accelerator/memory_used&quot; WHERE (type = &apos;pod&apos; AND pod_name =~ /^autotest-template-server123-4-87ms1$/ AND namespace_name =~ /^haoyuan-8$/) AND time &gt;= now() - 1h GROUP BY time(1m)</span><br></pre></td></tr></table></figure>
-<p>对于容器，需要的指标有：</p>
-<ul>
-<li>cpu/limit 容器的cpu限额</li>
-<li>cpu/request 独占的CPU核数</li>
-<li>cpu/usage_rate cpu使用率</li>
-<li>disk/io_read_bytes_rate 磁盘读速率</li>
-<li>disk/io_write_bytes_rate 磁盘写速率</li>
-<li>memory/limit 容器的内存限额</li>
-<li>memory/request 容器独占的内存</li>
-<li>memory/rss  使用的rss内存</li>
-<li>memory/usage 内存使用量</li>
-<li>memory/cache cache内存</li>
-<li>accelerator/memory_total    Memory capacity of an accelerator.</li>
-<li>accelerator/memory_used    Memory used of an accelerator.</li>
-<li>accelerator/duty_cycle    Duty cycle of an accelerator.</li>
-<li>accelerator/request    Number of accelerator devices requested by container.</li>
-<li>network/rx_rate 网络读速率</li>
-<li>network/tx_rate 网络写速率</li>
-</ul>
-<h3 id="附录：所有heapster指标"><a href="#附录：所有heapster指标" class="headerlink" title="附录：所有heapster指标"></a>附录：所有heapster指标</h3><ul>
-<li>参考： <a href="https://github.com/kubernetes/heapster/blob/master/docs/storage-schema.md" target="_blank" rel="noopener">https://github.com/kubernetes/heapster/blob/master/docs/storage-schema.md</a><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">cpu/limit</span><br><span class="line">cpu/node_allocatable</span><br><span class="line">cpu/node_capacity</span><br><span class="line">cpu/node_reservation</span><br><span class="line">cpu/node_utilization</span><br><span class="line">cpu/request</span><br><span class="line">cpu/usage</span><br><span class="line">cpu/usage_rate</span><br><span class="line">disk/io_read_bytes</span><br><span class="line">disk/io_read_bytes_rate</span><br><span class="line">disk/io_write_bytes</span><br><span class="line">disk/io_write_bytes_rate</span><br><span class="line">filesystem/available</span><br><span class="line">filesystem/inodes</span><br><span class="line">filesystem/inodes_free</span><br><span class="line">filesystem/limit</span><br><span class="line">filesystem/usage</span><br><span class="line">memory/cache</span><br><span class="line">memory/limit</span><br><span class="line">memory/major_page_faults</span><br><span class="line">memory/major_page_faults_rate</span><br><span class="line">memory/node_allocatable</span><br><span class="line">memory/node_capacity</span><br><span class="line">memory/node_reservation</span><br><span class="line">memory/node_utilization</span><br><span class="line">memory/page_faults</span><br><span class="line">memory/page_faults_rate</span><br><span class="line">memory/request</span><br><span class="line">memory/rss</span><br><span class="line">memory/usage</span><br><span class="line">memory/working_set</span><br><span class="line">accelerator/memory_total	Memory capacity of an accelerator.</span><br><span class="line">accelerator/memory_used	Memory used of an accelerator.</span><br><span class="line">accelerator/duty_cycle	Duty cycle of an accelerator.</span><br><span class="line">accelerator/request	Number of accelerator devices requested by container.</span><br><span class="line">network/rx</span><br><span class="line">network/rx_errors</span><br><span class="line">network/rx_errors_rate</span><br><span class="line">network/rx_rate</span><br><span class="line">network/tx</span><br><span class="line">network/tx_errors</span><br><span class="line">network/tx_errors_rate</span><br><span class="line">network/tx_rate</span><br><span class="line">restart_count</span><br><span class="line">uptime</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2018/09/27/influxDB-SQL-for-Kubernetes-metrics/" data-id="cjmkrwxjl0005pbd4a0e5qjo3" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-k8s-auth" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/11/26/k8s-auth/" class="article-date">
-  <time datetime="2016-11-26T12:05:14.000Z" itemprop="datePublished">2016-11-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/26/k8s-auth/">k8s_auth</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>cmd/kube-apiserver/app/server.go<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">authorizer, err := apiserver.NewAuthorizerFromAuthorizationConfig(s.AuthorizationMode, s.AuthorizationPolicyFile)</span><br><span class="line"></span><br><span class="line">authenticator, err := apiserver.NewAuthenticator(s.BasicAuthFile, s.ClientCAFile, s.TokenAuthFile, s.ServiceAccountKeyFile, s.ServiceAccountLookup, helper)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/11/26/k8s-auth/" data-id="cjmkrwxjc0001pbd4u4tnn78b" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-cprintf" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/02/cprintf/" class="article-date">
-  <time datetime="2016-07-02T08:53:09.000Z" itemprop="datePublished">2016-07-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/02/cprintf/">printf在kernel中的实现</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>static void<br>putch(int ch, int <em>cnt)<br>{<br>    cputchar(ch);
-    </em>cnt++;<br>}</p>
-<p>int<br>vcprintf(const char *fmt, va_list ap)<br>{<br>    int cnt = 0;</p>
-<pre><code>vprintfmt((void*)putch, &amp;cnt, fmt, ap);
-return cnt;
-</code></pre><p>}</p>
-<p>int<br>cprintf(const char *fmt, …)<br>{<br>    va_list ap;<br>    int cnt;</p>
-<pre><code>va_start(ap, fmt);
-cnt = vcprintf(fmt, ap);
-va_end(ap);
-
-return cnt;
-</code></pre><p>}</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/07/02/cprintf/" data-id="cjmkrwxjj0004pbd4w5wxkntl" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/">OS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-os-kernel" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/22/os-kernel/" class="article-date">
-  <time datetime="2016-05-22T07:55:13.000Z" itemprop="datePublished">2016-05-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/22/os-kernel/">os-kernel</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>重新开始刷清华ucore , 取材自MIT 6.828, 操作系统神课，把类似unix的内核手动实现一遍。周末刷了物理内存管理（双向链表维护空闲内存，多级页表映射）<br>目标今年向向docker贡献源代码！往kubernetes提交pr！先熟悉内核。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/05/22/os-kernel/" data-id="cjmkrwxj60000pbd4gnngxqfk" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernel/">kernel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/operating-system/">operating-system</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-test" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/22/test/" class="article-date">
-  <time datetime="2016-05-22T07:44:17.000Z" itemprop="datePublished">2016-05-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/22/test/">test</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="This-is-a-test"><a href="#This-is-a-test" class="headerlink" title="This is a test."></a>This is a test.</h1><p>Got to write in Hexo now!</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/05/22/test/" data-id="cjmkrwxjm0007pbd4qzdj3d8o" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 </section>
         
