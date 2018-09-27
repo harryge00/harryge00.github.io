@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Pao&#39;s town</title>
+  <title>influxDB-SQL-for-Kubernetes-metrics.md | Pao&#39;s town</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Pao&apos;s blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Pao&#39;s town">
-<meta property="og:url" content="http://harryge00.github.io/index.html">
+  <meta name="description" content="节点监控指标汇总 这里以 10.35.48.177为例，可以访问172.25.3.194上面的influxdb进行测试 InfluxDB 包含mean、group by 等语法，可以视需要使用 本文中仅为示例用法 有些指标是固定的，比如总的的文件系统空间、节点总内存及可分配总内存、总cpu核数、GPU总显存，所以一般搜最新的就好  容器总的cpu利用率(单位%)SELECT *  FROM k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="influxDB-SQL-for-Kubernetes-metrics.md">
+<meta property="og:url" content="http://harryge00.github.io/2018/09/27/influxDB-SQL-for-Kubernetes-metrics/index.html">
 <meta property="og:site_name" content="Pao&#39;s town">
-<meta property="og:description" content="Pao&apos;s blog">
+<meta property="og:description" content="节点监控指标汇总 这里以 10.35.48.177为例，可以访问172.25.3.194上面的influxdb进行测试 InfluxDB 包含mean、group by 等语法，可以视需要使用 本文中仅为示例用法 有些指标是固定的，比如总的的文件系统空间、节点总内存及可分配总内存、总cpu核数、GPU总显存，所以一般搜最新的就好  容器总的cpu利用率(单位%)SELECT *  FROM k8s">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-09-27T15:58:10.762Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Pao&#39;s town">
-<meta name="twitter:description" content="Pao&apos;s blog">
+<meta name="twitter:title" content="influxDB-SQL-for-Kubernetes-metrics.md">
+<meta name="twitter:description" content="节点监控指标汇总 这里以 10.35.48.177为例，可以访问172.25.3.194上面的influxdb进行测试 InfluxDB 包含mean、group by 等语法，可以视需要使用 本文中仅为示例用法 有些指标是固定的，比如总的的文件系统空间、节点总内存及可分配总内存、总cpu核数、GPU总显存，所以一般搜最新的就好  容器总的cpu利用率(单位%)SELECT *  FROM k8s">
   
     <link rel="alternate" href="/atom.xml" title="Pao&#39;s town" type="application/atom+xml">
   
@@ -67,9 +68,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-influxDB-SQL-for-Kubernetes-metrics" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-influxDB-SQL-for-Kubernetes-metrics" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/09/27/influxDB-SQL-for-Kubernetes-metrics/" class="article-date">
   <time datetime="2018-09-27T15:57:31.000Z" itemprop="datePublished">2018-09-27</time>
@@ -82,8 +81,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/27/influxDB-SQL-for-Kubernetes-metrics/">influxDB-SQL-for-Kubernetes-metrics.md</a>
+    <h1 class="article-title" itemprop="name">
+      influxDB-SQL-for-Kubernetes-metrics.md
     </h1>
   
 
@@ -173,179 +172,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-k8s-auth" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/11/26/k8s-auth/" class="article-date">
-  <time datetime="2016-11-26T12:05:14.000Z" itemprop="datePublished">2016-11-26</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/26/k8s-auth/">k8s_auth</a>
-    </h1>
+    <a href="/2016/11/26/k8s-auth/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">k8s_auth</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>cmd/kube-apiserver/app/server.go<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">authorizer, err := apiserver.NewAuthorizerFromAuthorizationConfig(s.AuthorizationMode, s.AuthorizationPolicyFile)</span><br><span class="line"></span><br><span class="line">authenticator, err := apiserver.NewAuthenticator(s.BasicAuthFile, s.ClientCAFile, s.TokenAuthFile, s.ServiceAccountKeyFile, s.ServiceAccountLookup, helper)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/11/26/k8s-auth/" data-id="cjmkrm5mt000ej0d4ivtfsyw9" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/">kubernetes</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-cprintf" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/02/cprintf/" class="article-date">
-  <time datetime="2016-07-02T08:53:09.000Z" itemprop="datePublished">2016-07-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/02/cprintf/">printf在kernel中的实现</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>static void<br>putch(int ch, int <em>cnt)<br>{<br>    cputchar(ch);
-    </em>cnt++;<br>}</p>
-<p>int<br>vcprintf(const char *fmt, va_list ap)<br>{<br>    int cnt = 0;</p>
-<pre><code>vprintfmt((void*)putch, &amp;cnt, fmt, ap);
-return cnt;
-</code></pre><p>}</p>
-<p>int<br>cprintf(const char *fmt, …)<br>{<br>    va_list ap;<br>    int cnt;</p>
-<pre><code>va_start(ap, fmt);
-cnt = vcprintf(fmt, ap);
-va_end(ap);
-
-return cnt;
-</code></pre><p>}</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/07/02/cprintf/" data-id="cjmkrm5m70002j0d4rekky305" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OS/">OS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-os-kernel" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/22/os-kernel/" class="article-date">
-  <time datetime="2016-05-22T07:55:13.000Z" itemprop="datePublished">2016-05-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/22/os-kernel/">os-kernel</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>重新开始刷清华ucore , 取材自MIT 6.828, 操作系统神课，把类似unix的内核手动实现一遍。周末刷了物理内存管理（双向链表维护空闲内存，多级页表映射）<br>目标今年向向docker贡献源代码！往kubernetes提交pr！先熟悉内核。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/05/22/os-kernel/" data-id="cjmkrm5m30001j0d4xvarzlam" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernel/">kernel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/operating-system/">operating-system</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-test" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/22/test/" class="article-date">
-  <time datetime="2016-05-22T07:44:17.000Z" itemprop="datePublished">2016-05-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/22/test/">test</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="This-is-a-test"><a href="#This-is-a-test" class="headerlink" title="This is a test."></a>This is a test.</h1><p>Got to write in Hexo now!</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://harryge00.github.io/2016/05/22/test/" data-id="cjmkrm5mc0004j0d4ru1abr61" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 </section>
         
